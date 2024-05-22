@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/springboot_shiro_vue?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 88888888
+logging:
+  config: classpath:logback-local.xml
