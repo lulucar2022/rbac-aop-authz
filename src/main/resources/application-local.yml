@@ -3,5 +3,13 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/springboot_shiro_vue?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
     password: 88888888
+    driver-class-name: com.mysql.cj.jdbc.Driver
 logging:
   config: classpath:logback-local.xml
+server:
+  port: 18888
+  
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: delete_status

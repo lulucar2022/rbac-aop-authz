@@ -1,3 +1,5 @@
 spring:
   profiles:
-    active: 
+    active: local
+  main:
+    banner-mode: off
