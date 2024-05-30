@@ -1,10 +1,20 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.Article;
 import cn.lulucar.springbootshirovue.mapper.ArticleMapper;
 import cn.lulucar.springbootshirovue.service.IArticleService;
+import cn.lulucar.springbootshirovue.util.DateUtil;
+import cn.lulucar.springbootshirovue.util.constants.Constants;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -14,7 +24,69 @@ import org.springframework.stereotype.Service;
  * @author wenxiaolan
  * @since 2024-05-28
  */
+@Slf4j
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements IArticleService {
 
+    private final ArticleMapper articleMapper;
+
+    public ArticleServiceImpl(ArticleMapper articleMapper) {
+        this.articleMapper = articleMapper;
+    }
+
+    /**
+     * 新增文章
+     * @param article 文章实体
+     * @return
+     */
+    @Override
+    public boolean save(Article article) {
+        // 参数判断
+        if (article.getContent().isBlank()) {
+            throw new ParameterFormatException("文章内容不能为空！");
+        }
+        // 创建时间和更新时间
+        article.setCreateTime(LocalDateTime.now());
+        article.setUpdateTime(LocalDateTime.now());
+        articleMapper.insert(article);
+        return true;
+    }
+
+   
+
+    /**
+     * 查询文章
+     * @param article 分页参数
+     * @return 返回文章列表
+     */
+    @Override
+    public Page<Article> listArticle(JSONObject article) {
+        Page<Article> page = new Page<>((Integer) article.get("current"), (Integer) article.get("size"));
+        return articleMapper.selectPage(page,null);
+    }
+
+    /**
+     * 更新文章
+     * @param article 文章实体
+     * @return
+     */
+    @Override
+    public boolean updateById(Article article) {
+        // 参数判断
+        if (article.getContent().isBlank()) {
+            throw new ParameterFormatException("文章内容不能为空！");
+        }
+        // if (!DateUtil.isLegalDate(String.valueOf(article.getCreateTime()), Constants.formatter)){
+        //     log.error("创建时间：{}",(article.getCreateTime()));
+        //     throw new ParameterFormatException("文章的创建时间格式错误！");
+        // }
+        // if (!DateUtil.isLegalDate(String.valueOf(article.getUpdateTime()), Constants.formatter)){
+        //     log.error("创建时间：{}",(article.getUpdateTime()));
+        //     throw new ParameterFormatException("文章的更新时间格式错误！");
+        // }
+        articleMapper.updateById(article);
+        return true;
+    }
+
+    
 }
