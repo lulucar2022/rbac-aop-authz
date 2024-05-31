@@ -14,5 +14,5 @@ public class Constants {
     public static final String SUCCESS_MSG = "OK";
 
     // 时间格式
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 }

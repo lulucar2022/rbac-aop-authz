@@ -17,3 +17,4 @@ mybatis-plus:
       logic-delete-field: delete_status
       logic-delete-value: 2
       logic-not-delete-value: 1
+    banner: false

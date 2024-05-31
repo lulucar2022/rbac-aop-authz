@@ -76,15 +76,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (article.getContent().isBlank()) {
             throw new ParameterFormatException("文章内容不能为空！");
         }
-        // if (!DateUtil.isLegalDate(String.valueOf(article.getCreateTime()), Constants.formatter)){
-        //     log.error("创建时间：{}",(article.getCreateTime()));
-        //     throw new ParameterFormatException("文章的创建时间格式错误！");
-        // }
-        // if (!DateUtil.isLegalDate(String.valueOf(article.getUpdateTime()), Constants.formatter)){
-        //     log.error("创建时间：{}",(article.getUpdateTime()));
-        //     throw new ParameterFormatException("文章的更新时间格式错误！");
-        // }
+        
         articleMapper.updateById(article);
+        
         return true;
     }
 
