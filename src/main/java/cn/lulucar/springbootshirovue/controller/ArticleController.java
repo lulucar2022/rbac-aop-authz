@@ -1,9 +1,12 @@
 package cn.lulucar.springbootshirovue.controller;
 
+import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.Article;
 import cn.lulucar.springbootshirovue.service.IArticleService;
 import cn.lulucar.springbootshirovue.util.CommonUtil;
+import cn.lulucar.springbootshirovue.util.PageFromRequestUtil;
+import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,18 +35,9 @@ public class ArticleController {
     // 文章列表
     @GetMapping({"/",""})
     public JSONObject list(HttpServletRequest request) {
-        Integer current = Integer.valueOf(request.getParameter("current"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
-        if (ObjectUtils.isEmpty(current) || ObjectUtils.isEmpty(size)) {
-            current =1;
-            size = 8;
-        }
-        JSONObject article = new JSONObject();
-        article.put("current",current);
-        article.put("size",size);
-        Page<Article> result = iArticleService.listArticle(article);
+        JSONObject page = PageFromRequestUtil.getPage(request);
+        Page<Article> result = iArticleService.listArticle(page);
         return CommonUtil.successJSON(result.getRecords());
-
     }
     
     // 新增文章
@@ -53,9 +47,8 @@ public class ArticleController {
             iArticleService.save(article);
             
         } catch (Exception e) {
-            
             log.warn(e.getMessage());
-            throw new ParameterFormatException("缺少必填参数，请检查参数格式");
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
 
         return CommonUtil.successJSON();
@@ -68,7 +61,7 @@ public class ArticleController {
             iArticleService.updateById(article);
         } catch (Exception e) {
             log.warn(e.getMessage());
-            throw new ParameterFormatException("缺少必填参数，请检查参数格式");
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
         return CommonUtil.successJSON();
     }

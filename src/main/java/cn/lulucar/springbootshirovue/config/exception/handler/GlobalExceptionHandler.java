@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.config.exception.handler;
 
+import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.util.CommonUtil;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     
-    @ExceptionHandler(ParameterFormatException.class)
-    public JSONObject parameterFormatExceptionHandler() {
-        return CommonUtil.failJSON(ErrorEnum.E_90003);
+    @ExceptionHandler(CommonJsonException.class)
+    public JSONObject commonJsonExceptionHandler() {
+        return CommonUtil.errorJSON(ErrorEnum.E_90003);
     } 
 }

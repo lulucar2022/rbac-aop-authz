@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-05-28
  */
 public interface ISysUserService extends IService<SysUser> {
-
+    // 登录时参数验证
 }

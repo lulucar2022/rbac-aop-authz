@@ -39,7 +39,7 @@ public class CommonUtil {
      * @param errorEnum 错误信息枚举对象
      * @return 失败响应结果
      */
-    public static JSONObject failJSON(ErrorEnum errorEnum) {
+    public static JSONObject errorJSON(ErrorEnum errorEnum) {
         JSONObject resultJSON = new JSONObject();
         resultJSON.put("code",errorEnum.getErrorCode());
         resultJSON.put("msg", errorEnum.getErrorMsg());

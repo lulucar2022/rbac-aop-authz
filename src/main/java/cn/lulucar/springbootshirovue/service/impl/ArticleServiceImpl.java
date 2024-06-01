@@ -1,11 +1,13 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.Article;
 import cn.lulucar.springbootshirovue.mapper.ArticleMapper;
 import cn.lulucar.springbootshirovue.service.IArticleService;
 import cn.lulucar.springbootshirovue.util.DateUtil;
 import cn.lulucar.springbootshirovue.util.constants.Constants;
+import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,7 +45,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public boolean save(Article article) {
         // 参数判断
         if (article.getContent().isBlank()) {
-            throw new ParameterFormatException("文章内容不能为空！");
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
         // 创建时间和更新时间
         article.setCreateTime(LocalDateTime.now());
@@ -74,7 +76,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public boolean updateById(Article article) {
         // 参数判断
         if (article.getContent().isBlank()) {
-            throw new ParameterFormatException("文章内容不能为空！");
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
         
         articleMapper.updateById(article);
