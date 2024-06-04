@@ -11,10 +11,15 @@ import org.springframework.util.ObjectUtils;
  * @description 从http请求中提取出分页参数
  */
 public class PageFromRequestUtil {
-    
+    /**
+     * 
+     * @param request http请求
+     * @return 返回分页需要的参数
+     */
     public static JSONObject getPage(HttpServletRequest request) {
-        Integer current = Integer.valueOf(request.getParameter("current"));
-        Integer size = Integer.valueOf(request.getParameter("size"));
+        
+        int current = Integer.parseInt(request.getParameter("current"));
+        int size = Integer.parseInt(request.getParameter("size"));
         if (ObjectUtils.isEmpty(current) || ObjectUtils.isEmpty(size)) {
             current =1;
             size = 8;

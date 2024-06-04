@@ -28,5 +28,5 @@ public class CommonJsonException extends RuntimeException{
     public CommonJsonException(JSONObject resultJson) {
         this.resultJson = resultJson;
     }
-
+    
 }
