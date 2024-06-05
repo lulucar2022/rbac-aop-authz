@@ -1,6 +1,8 @@
 package cn.lulucar.springbootshirovue.util;
 
 import com.alibaba.fastjson.JSONObject;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.ObjectUtils;
 
@@ -12,7 +14,7 @@ import org.springframework.util.ObjectUtils;
  */
 public class PageFromRequestUtil {
     /**
-     * 
+     * 从http请求中获取分页参数
      * @param request http请求
      * @return 返回分页需要的参数
      */
@@ -29,4 +31,5 @@ public class PageFromRequestUtil {
         page.put("size",size);
         return page;
     }
+    
 }

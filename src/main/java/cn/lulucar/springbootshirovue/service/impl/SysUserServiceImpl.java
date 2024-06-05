@@ -35,10 +35,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         this.sysUserMapper = sysUserMapper;
     }
 
-    // 查询用户
+    // 用户列表
     @Override
     public Page<SysUser> listUser(JSONObject user) {
-        Page<SysUser> page = new Page<>((Integer) user.get("current"),(Integer) user.get("size"));
+        Page<SysUser> page = new Page<>((Long) user.get("current"),(Long) user.get("size"));
         return sysUserMapper.selectPage(page, null);   
     }
 

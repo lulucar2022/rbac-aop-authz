@@ -3,9 +3,11 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
+import cn.lulucar.springbootshirovue.util.PageFromRequestUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,29 +21,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
+    private final SysRoleMapper sysRoleMapper;
+
+    public SysRoleServiceImpl(SysRoleMapper sysRoleMapper) {
+        this.sysRoleMapper = sysRoleMapper;
+    }
+
     /**
      * 角色列表
      * @param role Map结构
-     * @return
+     * @return 
      */
     @Override
     public Page<SysRole> listRole(JSONObject role) {
-        return null;
+        
+        Page<SysRole> page = new Page<>((Long) role.get("current"), (Long) role.get("size"));
+        return sysRoleMapper.selectPage(page,null);
     }
 
     /**
      * 新增角色
-     * @param role 角色实体
+     * 1.新增角色
+     * 2.新增角色的权限    
+     * @param jsonObject 包含 角色实体和权限列表
      * @return
      */
     @Override
-    public boolean addRole(SysRole role) {
+    public boolean addRole(JSONObject jsonObject) {
+        
+        
         return false;
     }
 
     /**
      * 修改角色
-     * @param role 
+     * @param role 角色实体
      * @return
      */
     @Override
@@ -50,7 +64,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     /**
-     * @param role 
+     * @param role 角色实体
      * @return
      */
     @Override

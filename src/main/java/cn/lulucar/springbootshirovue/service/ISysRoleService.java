@@ -17,7 +17,7 @@ public interface ISysRoleService extends IService<SysRole> {
     // 角色列表
     Page<SysRole> listRole(JSONObject role);
     // 新增角色
-    boolean addRole(SysRole role);
+    boolean addRole(JSONObject jsonObject);
     // 修改角色 
     boolean updateRole(SysRole role);
     // 删除角色

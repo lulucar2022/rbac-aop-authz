@@ -63,7 +63,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     @Override
     public Page<Article> listArticle(JSONObject article) {
-        Page<Article> page = new Page<>((Integer) article.get("current"), (Integer) article.get("size"));
+        Page<Article> page = new Page<>((Long) article.get("current"), (Long) article.get("size"));
         return articleMapper.selectPage(page,null);
     }
 
