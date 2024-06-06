@@ -1,6 +1,7 @@
 package cn.lulucar.springbootshirovue.service;
 
 import cn.lulucar.springbootshirovue.entity.SysPermission;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,5 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISysPermissionService extends IService<SysPermission> {
     // 查询全部权限
+    
     
 }

@@ -46,4 +46,12 @@ class SysRoleServiceImplTest {
     @Test
     void deleteRole() {
     }
+
+    @Test
+    void updateRoleName() {
+        SysRole role = new SysRole();
+        role.setRoleName("管理员2");
+        boolean b = iSysRoleService.updateRoleName(role);
+        Assertions.assertTrue(b);
+    }
 }

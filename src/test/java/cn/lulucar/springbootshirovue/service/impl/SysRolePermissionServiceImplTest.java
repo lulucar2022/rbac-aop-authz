@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,5 +31,14 @@ class SysRolePermissionServiceImplTest {
         permissionIds.add(103);
         boolean b = iSysRolePermissionService.insertRolePermission(1, permissionIds);
         Assertions.assertTrue(b,"插入成功");
+    }
+
+    @Test
+    void getRoleAllPermissions() {
+        int roleId = 1;
+        List<SysRolePermission> roleAllPermissions = iSysRolePermissionService.getRoleAllPermissions(roleId);
+        System.out.println(roleAllPermissions.toString());
+        Assertions.assertEquals(3,roleAllPermissions.size());
+        
     }
 }

@@ -1,10 +1,10 @@
 package cn.lulucar.springbootshirovue.service;
 
-import cn.lulucar.springbootshirovue.entity.SysPermission;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +17,6 @@ import java.util.Collection;
 public interface ISysRolePermissionService extends IService<SysRolePermission> {
     // 给角色插入权限
     boolean insertRolePermission(int roleId, Collection<Integer> permissions);
+    // 根据角色id查询权限
+    List<SysRolePermission> getRoleAllPermissions(int roleId);
 }

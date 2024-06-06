@@ -1,7 +1,11 @@
 package cn.lulucar.springbootshirovue.mapper;
 
 import cn.lulucar.springbootshirovue.entity.SysPermission;
+import cn.lulucar.springbootshirovue.entity.SysRolePermission;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
 
+    List<SysPermission> selectList(LambdaQueryWrapper<SysRolePermission> lambdaQueryWrapper);
 }

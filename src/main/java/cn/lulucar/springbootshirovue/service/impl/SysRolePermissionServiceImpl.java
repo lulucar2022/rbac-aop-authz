@@ -1,11 +1,11 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
-import cn.lulucar.springbootshirovue.entity.SysPermission;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.mapper.SysPermissionMapper;
 import cn.lulucar.springbootshirovue.mapper.SysRolePermissionMapper;
 import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,10 +27,10 @@ import java.util.List;
 @Service
 public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionMapper, SysRolePermission> implements ISysRolePermissionService {
 
-    private final SysPermissionMapper sysPermissionMapper;
-
-    public SysRolePermissionServiceImpl(SysPermissionMapper sysPermissionMapper) {
-        this.sysPermissionMapper = sysPermissionMapper;
+    
+    private final SysRolePermissionMapper sysRolePermissionMapper;
+    public SysRolePermissionServiceImpl(SysPermissionMapper sysPermissionMapper, SysRolePermissionMapper sysRolePermissionMapper) {
+        this.sysRolePermissionMapper = sysRolePermissionMapper;
     }
 
     /**
@@ -54,5 +53,18 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
         MybatisBatch.Method<SysRolePermission> method = new MybatisBatch.Method<>(SysRolePermissionMapper.class);
         mybatisBatch.execute(method.insert());
         return true;
+    }
+
+    /**
+     * 根据角色id查询权限
+     *
+     * @param roleId 角色id
+     * @return
+     */
+    @Override
+    public List<SysRolePermission> getRoleAllPermissions(int roleId) {
+        LambdaQueryWrapper<SysRolePermission> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SysRolePermission::getRoleId,roleId);
+        return sysRolePermissionMapper.selectList(lambdaQueryWrapper);
     }
 }
