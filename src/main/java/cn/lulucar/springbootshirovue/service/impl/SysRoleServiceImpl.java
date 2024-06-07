@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,8 +84,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         for (SysRolePermission roleAllPermission : roleAllPermissions) {
             oldPerms.add(roleAllPermission.getPermissionId());
         }
-        
-        
+        // 修改角色名称
+        boolean b = updateRoleName(role);
+        // 添加新的权限
         return false;
     }
 
@@ -101,7 +103,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         lambdaQueryWrapper.eq(SysRole::getRoleName,role.getRoleName());
         // 判断是否存在同名角色
         Long existName = sysRoleMapper.selectCount(lambdaQueryWrapper);
-        
+        if (ObjectUtils.isEmpty(role.getId())) {
+            return false;
+        }
         sysRoleMapper.updateById(role);
         return existName == 0L;
     }
