@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.SysPermission;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
@@ -9,16 +10,17 @@ import cn.lulucar.springbootshirovue.service.ISysRoleService;
 import cn.lulucar.springbootshirovue.util.PageFromRequestUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -29,14 +31,15 @@ import java.util.List;
  * @since 2024-05-28
  */
 @Service
+@Slf4j
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
     private final SysRoleMapper sysRoleMapper;
-    @Autowired
-    private ISysRolePermissionService iSysRolePermissionService;
+    private final ISysRolePermissionService iSysRolePermissionService;
 
-    public SysRoleServiceImpl(SysRoleMapper sysRoleMapper) {
+    public SysRoleServiceImpl(SysRoleMapper sysRoleMapper, ISysRolePermissionService iSysRolePermissionService) {
         this.sysRoleMapper = sysRoleMapper;
+        this.iSysRolePermissionService = iSysRolePermissionService;
     }
 
     /**
@@ -60,6 +63,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public boolean addRole(JSONObject jsonObject) {
+        // 新增角色
         
         
         return false;
@@ -73,21 +77,27 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @param role 角色实体
      * @param permissions 新权限列表
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateRole(SysRole role, Collection<Integer> permissions) {
         int roleId = role.getId();
         // 新权限列表
-        List<Integer> newPerms = (List<Integer>) permissions;
+        List<Integer> newPerms = new ArrayList<>(permissions) ;
+        log.info("新权限：{}",newPerms.toArray());
         // 现有权限列表
         List<SysRolePermission> roleAllPermissions = iSysRolePermissionService.getRoleAllPermissions(roleId);
-        List<Integer> oldPerms = new ArrayList<>();
+        Set<Integer> oldPerms = new HashSet<>();
         for (SysRolePermission roleAllPermission : roleAllPermissions) {
             oldPerms.add(roleAllPermission.getPermissionId());
         }
+        log.info("现有权限：{}",oldPerms.toArray());
         // 修改角色名称
         boolean b = updateRoleName(role);
         // 添加新的权限
-        return false;
+        boolean b1 = iSysRolePermissionService.insertRolePermission(roleId, newPerms);
+        // 移除旧的权限
+        boolean b2 = iSysRolePermissionService.removeRolePermission(roleId, oldPerms);
+        return b && b1 && b2;
     }
 
     /**
@@ -96,21 +106,21 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @param role 角色实体
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
+    
     @Override
     public boolean updateRoleName(SysRole role) {
-        LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(SysRole::getRoleName,role.getRoleName());
-        // 判断是否存在同名角色
-        Long existName = sysRoleMapper.selectCount(lambdaQueryWrapper);
-        if (ObjectUtils.isEmpty(role.getId())) {
-            return false;
+        if (role == null || role.getId() == null || role.getRoleName().isEmpty()) {
+            throw new ParameterFormatException("role实体缺少必要属性");
         }
-        sysRoleMapper.updateById(role);
-        return existName == 0L;
+        LambdaUpdateWrapper<SysRole> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(SysRole::getId,role.getId());
+
+        int updated = sysRoleMapper.update(lambdaUpdateWrapper);
+        return updated > 0;
     }
 
     /**
+     * 删除角色
      * @param role 角色实体
      * @return
      */

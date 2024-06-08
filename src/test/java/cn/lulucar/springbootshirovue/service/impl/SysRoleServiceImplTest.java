@@ -1,13 +1,18 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
 import cn.lulucar.springbootshirovue.entity.SysRole;
+import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +27,8 @@ class SysRoleServiceImplTest {
 
     @Autowired
     private ISysRoleService iSysRoleService;
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
     @Test
     void listRole() {
         JSONObject jsonObject = new JSONObject();
@@ -41,6 +48,16 @@ class SysRoleServiceImplTest {
 
     @Test
     void updateRole() {
+        LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SysRole::getId,1);
+        SysRole role = sysRoleMapper.selectOne(lambdaQueryWrapper);
+        role.setRoleName("超级管理员");
+        Set<Integer> perms = new HashSet<>();
+        perms.add(101);
+        perms.add(102);
+        perms.add(103);
+        boolean b = iSysRoleService.updateRole(role, perms);
+        Assertions.assertTrue(b);
     }
 
     @Test

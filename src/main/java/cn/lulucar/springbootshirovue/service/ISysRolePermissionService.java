@@ -19,4 +19,6 @@ public interface ISysRolePermissionService extends IService<SysRolePermission> {
     boolean insertRolePermission(int roleId, Collection<Integer> permissions);
     // 根据角色id查询权限
     List<SysRolePermission> getRoleAllPermissions(int roleId);
+    // 删除角色的权限
+    boolean removeRolePermission(int roleId, Collection<Integer> permissions);
 }

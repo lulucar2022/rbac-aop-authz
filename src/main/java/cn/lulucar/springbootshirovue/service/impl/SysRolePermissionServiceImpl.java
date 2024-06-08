@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.mapper.SysPermissionMapper;
 import cn.lulucar.springbootshirovue.mapper.SysRolePermissionMapper;
@@ -34,6 +35,7 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
     }
 
     /**
+     * 给角色插入权限
      * @param roleId 角色Id
      * @param permissions 新增的权限列表
      * @return
@@ -66,5 +68,24 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
         LambdaQueryWrapper<SysRolePermission> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(SysRolePermission::getRoleId,roleId);
         return sysRolePermissionMapper.selectList(lambdaQueryWrapper);
+    }
+
+    /**
+     * 根据角色id删除权限（权限删除队列）
+     * @param roleId 角色id
+     * @param permissions 权限列表
+     * @return
+     */
+    @Override
+    public boolean removeRolePermission(int roleId, Collection<Integer> permissions) {
+        if (permissions == null || permissions.isEmpty()) {
+            throw new ParameterFormatException("集合为空");
+        }
+        LambdaQueryWrapper<SysRolePermission> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SysRolePermission::getRoleId,roleId)
+                .in(SysRolePermission::getPermissionId,permissions);
+        int delete = sysRolePermissionMapper.delete(lambdaQueryWrapper);
+        
+        return delete > 0;
     }
 }

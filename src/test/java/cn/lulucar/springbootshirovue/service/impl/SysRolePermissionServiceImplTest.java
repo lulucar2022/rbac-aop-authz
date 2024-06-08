@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,5 +42,16 @@ class SysRolePermissionServiceImplTest {
         System.out.println(roleAllPermissions.toString());
         Assertions.assertEquals(3,roleAllPermissions.size());
         
+    }
+    
+    @Test
+    void removeRolePermission() {
+        Set<Integer> permissions = new HashSet<>();
+        permissions.add(101);
+        permissions.add(102);
+        permissions.add(103);
+        permissions.add(103);
+        boolean b = iSysRolePermissionService.removeRolePermission(1, permissions);
+        Assertions.assertTrue(b);
     }
 }
