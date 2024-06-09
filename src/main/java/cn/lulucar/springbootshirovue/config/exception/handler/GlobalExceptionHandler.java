@@ -22,5 +22,4 @@ public class GlobalExceptionHandler {
         return CommonUtil.errorJSON(ErrorEnum.E_90003);
     } 
     
-    
 }

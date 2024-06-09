@@ -43,7 +43,13 @@ class SysRoleServiceImplTest {
 
     @Test
     void addRole() {
-        
+        SysRole role = new SysRole();
+        role.setRoleName("测试员");
+        Set<Integer> permissions = new HashSet<>();
+        permissions.add(101);
+        permissions.add(102);
+        permissions.add(103);
+        iSysRoleService.addRole(role,permissions);
     }
 
     @Test

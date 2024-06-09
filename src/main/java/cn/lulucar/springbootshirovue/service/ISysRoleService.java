@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.service;
 
+import cn.lulucar.springbootshirovue.dto.RolePermissionDTO;
 import cn.lulucar.springbootshirovue.entity.SysPermission;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import com.alibaba.fastjson.JSONObject;
@@ -20,7 +21,7 @@ public interface ISysRoleService extends IService<SysRole> {
     // 角色列表
     Page<SysRole> listRole(JSONObject role);
     // 新增角色
-    boolean addRole(JSONObject jsonObject);
+    boolean addRole(SysRole role, Collection<Integer> permissions);
     // 修改角色 
     boolean updateRole(SysRole role, Collection<Integer> permissions);
     // 修改角色名称
