@@ -3,6 +3,7 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.entity.SysUser;
 import cn.lulucar.springbootshirovue.mapper.SysUserMapper;
 import cn.lulucar.springbootshirovue.service.ISysUserService;
+import cn.lulucar.springbootshirovue.util.PasswordUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Assertions;
@@ -38,18 +39,18 @@ class SysUserServiceImplTest {
         Assertions.assertNotNull(page);
     }
     
-    @Disabled
+    
     @Test
     void addUser() {
         SysUser user = new SysUser();
-        user.setUsername("lulucar");
+        user.setUsername("lulucar22222");
         user.setNickname("AAAAA");
-        user.setCreateTime(LocalDateTime.now());
-        user.setUpdateTime(LocalDateTime.now());
-        user.setPassword("8888");
+        String password = PasswordUtil.encryptPassword("8888");
+        user.setPassword(password);
         iSysUserService.addUser(user);
     }
     
+    @Disabled
     @Test
     void countUser() {
         int count = iSysUserService.countUser();

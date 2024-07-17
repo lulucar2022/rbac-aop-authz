@@ -1,11 +1,14 @@
 package cn.lulucar.springbootshirovue.controller;
 
+import cn.lulucar.springbootshirovue.dto.UserDTO;
+import cn.lulucar.springbootshirovue.service.LoginService;
+import cn.lulucar.springbootshirovue.util.CommonUtil;
+import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author wenxiaolan
@@ -15,17 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
-@RequestMapping("/auth")
+@RequestMapping("/login")
 public class LoginController {
-    
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     //todo 登录
-    @PostMapping("/login")
-    public JSONObject login() {
-        
-        return new JSONObject();
+    @PostMapping({"", "/"})
+    public JSONObject authLogin(@RequestBody UserDTO userDTO) {
+        if (userDTO.getUsername().isEmpty()|| userDTO.getPassword().isEmpty()) {
+            return CommonUtil.errorJSON(ErrorEnum.E_90003);
+        }
+        return loginService.authLogin(userDTO.getUsername(),userDTO.getPassword());
     }
     //todo 查询
-    @PostMapping("/info")
+    @GetMapping({"/","/info"})
     public JSONObject info() {
         
         return new JSONObject();

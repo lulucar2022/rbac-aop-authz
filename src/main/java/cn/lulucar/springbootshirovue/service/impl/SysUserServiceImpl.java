@@ -69,4 +69,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public boolean updateUser(SysUser user) {
         return false;
     }
+
+    /**
+     * 查询用户
+     * @param username 用户名
+     * @return 用户对象（为空说明不存在）
+     */
+    @Override
+    public SysUser checkUser(String username) {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        return sysUserMapper.selectOne(queryWrapper);
+    }
 }
