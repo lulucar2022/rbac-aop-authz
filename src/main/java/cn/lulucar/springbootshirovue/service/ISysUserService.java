@@ -26,11 +26,13 @@ public interface ISysUserService extends IService<SysUser> {
 
     /**
      * 修改用户，包括删除所有角色和添加新角色
-     * @param user
+     * @param user 用户类
      * @return
      */
     boolean updateUser(SysUser user);
     
+    // 查询用户
+    SysUser checkUser(String username);
     // 登录时参数验证
     
 }

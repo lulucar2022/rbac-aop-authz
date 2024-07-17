@@ -22,6 +22,6 @@ public class SessionUserInfo {
     private String username;
     private String nickname;
     private List<Integer> roleIds;
-    private Set<String> menuList;
-    private Set<String> permissionList;
+    private List<String> menuList;
+    private List<String> permissionList;
 }

@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.mapper;
 
+import cn.lulucar.springbootshirovue.dto.session.SessionUserInfo;
 import cn.lulucar.springbootshirovue.entity.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
+    
 }

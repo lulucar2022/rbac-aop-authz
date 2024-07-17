@@ -70,8 +70,7 @@
     <logger name="org.mybatis" level="INFO"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.apache" level="WARN"/>
-    <logger name="com.heeexy.example" level="DEBUG"/>
     <!--如果需要打印SQL,可以把下面的级别设置为DEBUG -->
-    <logger name="com.heeexy.example.dao" level="DEBUG"/>
+    <logger name="cn.lulucar.springbootshirovue.mapper" level="DEBUG"/>
 
 </configuration>

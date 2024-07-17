@@ -14,6 +14,5 @@ import java.util.Set;
 public class RolePermissionDTO {
     private Integer roleId;
     private String roleName;
-    
     private Set<Integer> permissions;
 }

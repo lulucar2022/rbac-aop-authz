@@ -1,13 +1,12 @@
 package cn.lulucar.springbootshirovue.controller;
 
+import cn.lulucar.springbootshirovue.entity.SysUser;
 import cn.lulucar.springbootshirovue.service.ISysUserService;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author wenxiaolan
@@ -34,8 +33,11 @@ public class UserController {
         
     }
     //todo 新增用户
-    
+    @PostMapping("/")
+    public JSONObject add(@RequestBody SysUser user) {
+        return new JSONObject();
+    }
     //todo 更新用户
     
-    //todo 
+    //todo 删除用户
 }

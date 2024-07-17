@@ -4,6 +4,7 @@ import cn.lulucar.springbootshirovue.entity.SysPermission;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ import java.util.List;
  */
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
 
-    List<SysPermission> selectList(LambdaQueryWrapper<SysRolePermission> lambdaQueryWrapper);
+    
 }
