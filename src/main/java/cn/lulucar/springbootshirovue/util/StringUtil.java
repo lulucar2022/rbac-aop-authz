@@ -10,10 +10,10 @@ import org.springframework.util.ObjectUtils;
  */
 public class StringUtil {
     public static boolean isNullOrEmpty(String string) {
-        return string.isEmpty() || string.equals("null");
+        return null == string || string.isEmpty() || "null".equals(string);
     }
     
     public static boolean isNullOrEmpty(Object o) {
-        return o.equals("") || ObjectUtils.isEmpty(o);
+        return null == o || "".equals(o);
     }
 }
