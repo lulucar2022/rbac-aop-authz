@@ -37,13 +37,11 @@ public class LoginController {
     //todo 查询
     @GetMapping({"/","/info"})
     public JSONObject info() {
-        
-        return new JSONObject();
+        return loginService.info();
     }
     //todo 登出
     @PostMapping("/logout")
     public JSONObject logout() {
-        
-        return new JSONObject();
+        return loginService.logout();
     }
 }

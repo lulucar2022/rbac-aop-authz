@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @description
  */
 @Configuration
+@EnableCaching
 public class CacheConfig {
 
     /**

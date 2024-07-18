@@ -1,5 +1,7 @@
 package cn.lulucar.springbootshirovue.service;
 
+import cn.lulucar.springbootshirovue.dto.session.SessionUserInfo;
+
 /**
  * @author wenxiaolan
  * @ClassName TokenService
@@ -10,4 +12,8 @@ package cn.lulucar.springbootshirovue.service;
 public interface TokenService {
     
     public String generateToken(String username);
+
+    SessionUserInfo getUserInfo();
+
+    void invalidateToken();
 }

@@ -1,6 +1,7 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
+import cn.lulucar.springbootshirovue.dto.session.SessionUserInfo;
 import cn.lulucar.springbootshirovue.entity.SysUser;
 import cn.lulucar.springbootshirovue.service.ISysUserService;
 import cn.lulucar.springbootshirovue.service.LoginService;
@@ -18,7 +19,7 @@ import java.util.Objects;
  * @author wenxiaolan
  * @ClassName LoginServiceImpl
  * @date 2024/7/16 22:00
- * @description
+ * @description 登录控制器
  */
 @Slf4j
 @Service
@@ -50,25 +51,31 @@ public class LoginServiceImpl implements LoginService {
         if (!verified) {
             throw new CommonJsonException(ErrorEnum.E_10010);
         }
-        // todo 生成 token 的方法
+        // 生成用户唯一 token
         String token = tokenService.generateToken(user.getUsername());
         info.put("token",token);
         return CommonUtil.successJSON(info);
     }
 
     /**
+     * 查询当前登录用户的信息
      * @return
      */
     @Override
     public JSONObject info() {
-        return null;
+        // 从session 中获取用户信息
+        SessionUserInfo userInfo = tokenService.getUserInfo();
+        log.info("当前登录用户信息:{}",userInfo);
+        return CommonUtil.successJSON(userInfo);
     }
 
     /**
+     * 登出
      * @return
      */
     @Override
     public JSONObject logout() {
-        return null;
+        tokenService.invalidateToken();
+        return CommonUtil.successJSON();
     }
 }

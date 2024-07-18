@@ -1,8 +1,11 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.dto.session.SessionUserInfo;
 import cn.lulucar.springbootshirovue.mapper.LoginMapper;
 import cn.lulucar.springbootshirovue.service.TokenService;
+import cn.lulucar.springbootshirovue.util.StringUtil;
+import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -38,6 +41,51 @@ public class TokenServiceImpl implements TokenService {
         // 设置用户信息缓存
         setCache(token,username);
         return token;
+    }
+
+    /**
+     * 从 MDC中获取token，然后从缓存中获取用户信息
+     * @return 用户信息
+     */
+    @Override
+    public SessionUserInfo getUserInfo() {
+        String token = MDC.get("token");
+        
+        // todo 查看token有没有
+        log.info("token is {}",token);
+        return getUserInfoFromCache(token);
+    }
+
+    /**
+     * 登出时，将 token 设置为无效
+     */
+    @Override
+    public void invalidateToken() {
+        String token = MDC.get("token");
+        if (!StringUtil.isNullOrEmpty(token)) {
+            cacheMap.invalidate(token);   
+        }
+        log.debug("用户登出，清除缓存，token={}", token);
+    }
+
+    /**
+     * 根据 token 查询用户信息
+     * 从缓存中获取用户信息
+     * @param token 令牌
+     * @return 用户信息
+     */
+    private SessionUserInfo getUserInfoFromCache(String token) {
+        // 验证token的有效性
+        if (StringUtil.isNullOrEmpty(token)) {
+            throw new CommonJsonException(ErrorEnum.E_20011);
+        }
+        log.debug("从缓存中获取用户token:token={}", token);
+        SessionUserInfo info = cacheMap.getIfPresent(token);
+        if (info == null) {
+            log.info("缓存中不存在token={}", token);
+            throw new CommonJsonException(ErrorEnum.E_20011);
+        }
+        return info;
     }
 
     /**
