@@ -26,7 +26,7 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    //todo 登录
+    // 登录
     @PostMapping({"", "/"})
     public JSONObject authLogin(@RequestBody UserDTO userDTO) {
         if (userDTO.getUsername().isEmpty()|| userDTO.getPassword().isEmpty()) {
@@ -34,7 +34,7 @@ public class LoginController {
         }
         return loginService.authLogin(userDTO.getUsername(),userDTO.getPassword());
     }
-    //todo 查询
+    // 查询
     @GetMapping({"/","/info"})
     public JSONObject info() {
         return loginService.info();

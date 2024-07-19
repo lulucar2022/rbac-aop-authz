@@ -50,9 +50,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public SessionUserInfo getUserInfo() {
         String token = MDC.get("token");
-        
-        // todo 查看token有没有
-        log.info("token is {}",token);
         return getUserInfoFromCache(token);
     }
 
@@ -64,6 +61,8 @@ public class TokenServiceImpl implements TokenService {
         String token = MDC.get("token");
         if (!StringUtil.isNullOrEmpty(token)) {
             cacheMap.invalidate(token);   
+        } else {
+            throw new CommonJsonException(ErrorEnum.E_10011);
         }
         log.debug("用户登出，清除缓存，token={}", token);
     }
