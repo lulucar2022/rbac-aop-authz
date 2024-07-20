@@ -1,5 +1,6 @@
 package cn.lulucar.springbootshirovue.controller;
 
+import cn.lulucar.springbootshirovue.config.annotation.RequiresPermissions;
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.entity.Article;
@@ -33,6 +34,7 @@ public class ArticleController {
     }
     
     // 文章列表
+    @RequiresPermissions("article:list")
     @GetMapping({"/",""})
     public JSONObject list(HttpServletRequest request) {
         JSONObject page = PageFromRequestUtil.getPage(request);
@@ -41,6 +43,7 @@ public class ArticleController {
     }
     
     // 新增文章
+    @RequiresPermissions("article:add")
     @PostMapping({"/",""})
     public JSONObject add(@RequestBody Article article) {
         try {
@@ -55,6 +58,7 @@ public class ArticleController {
     }
     
     // 修改文章
+    @RequiresPermissions("article:update")
     @PutMapping({"/",""})   
     public JSONObject update(@RequestBody Article article) {
         try {
