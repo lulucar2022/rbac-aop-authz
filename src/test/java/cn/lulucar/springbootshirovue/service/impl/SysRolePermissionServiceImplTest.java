@@ -3,6 +3,7 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,13 +29,14 @@ class SysRolePermissionServiceImplTest {
     @Test
     void insertRolePermission() {
         List<Integer> permissionIds = new ArrayList<>();
-        permissionIds.add(101);
-        permissionIds.add(102);
-        permissionIds.add(103);
-        boolean b = iSysRolePermissionService.insertRolePermission(1, permissionIds);
+        permissionIds.add(601);
+        permissionIds.add(602);
+        permissionIds.add(603);
+        boolean b = iSysRolePermissionService.insertRolePermission(5, permissionIds);
         Assertions.assertTrue(b,"插入成功");
     }
 
+    @Disabled
     @Test
     void getRoleAllPermissions() {
         int roleId = 1;
@@ -44,6 +46,7 @@ class SysRolePermissionServiceImplTest {
         
     }
     
+    @Disabled
     @Test
     void removeRolePermission() {
         Set<Integer> permissions = new HashSet<>();

@@ -3,17 +3,16 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.entity.SysUser;
 import cn.lulucar.springbootshirovue.mapper.SysUserMapper;
+import cn.lulucar.springbootshirovue.service.ISysRoleService;
+import cn.lulucar.springbootshirovue.service.ISysUserRoleService;
 import cn.lulucar.springbootshirovue.service.ISysUserService;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,15 +29,21 @@ import java.util.List;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final SysUserMapper sysUserMapper;
-
-    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+    private final ISysUserRoleService iSysUserRoleService;
+    public SysUserServiceImpl(SysUserMapper sysUserMapper, ISysRoleService iSysRoleService, ISysUserRoleService iSysUserRoleService) {
         this.sysUserMapper = sysUserMapper;
+        this.iSysUserRoleService = iSysUserRoleService;
     }
 
-    // 用户列表
+    /**
+     * 查询用户列表
+     * @param current 当前页
+     * @param size 每页大小
+     * @return
+     */
     @Override
-    public Page<SysUser> listUser(JSONObject user) {
-        Page<SysUser> page = new Page<>((Long) user.get("current"),(Long) user.get("size"));
+    public Page<SysUser> listUser(Long current, Long size) {
+        Page<SysUser> page = new Page<>(current,size);
         return sysUserMapper.selectPage(page, null);   
     }
 
@@ -49,19 +54,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     // 新增用户
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean addUser(SysUser user) {
-        // 判断用户名是否存在
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",user.getUsername());
-        int exist = Math.toIntExact(sysUserMapper.selectCount(queryWrapper));
-        log.info("exist = {}",exist);
-        if (exist == 0) {
-          sysUserMapper.insert(user);  
-        } else {
+    public void addUser(SysUser user, List<Integer> roles) {
+        // 判断用户是否存在
+        // QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        // queryWrapper.eq("username",user.getUsername());
+        // int exist = Math.toIntExact(sysUserMapper.selectCount(queryWrapper));
+        SysUser checked = checkUser(user.getUsername());
+        if (checked != null) {
             throw new CommonJsonException(ErrorEnum.E_10009);
         }
-        return true;
+        // 插入用户
+        sysUserMapper.insert(user);
+        // 批量给用户添加角色（用户关联角色）
+        iSysUserRoleService.batchAddUserRole(user.getId(), roles);
     }
 
     // 修改用户
@@ -71,7 +78,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     /**
-     * 查询用户
+     * 验证用户是否存在
      * @param username 用户名
      * @return 用户对象（为空说明不存在）
      */
@@ -81,4 +88,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         queryWrapper.eq("username",username);
         return sysUserMapper.selectOne(queryWrapper);
     }
+    
+    
 }

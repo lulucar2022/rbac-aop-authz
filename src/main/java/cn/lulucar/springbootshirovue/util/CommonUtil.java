@@ -4,6 +4,8 @@ import cn.lulucar.springbootshirovue.util.constants.Constants;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.List;
+
 /**
  * @author wenxiaolan
  * @ClassName CommonUtil
@@ -47,4 +49,19 @@ public class CommonUtil {
         resultJSON.put("data", new JSONObject());
         return resultJSON;
     }
+
+    /**
+     * 查询分页结果集
+     * @param list 分页列表
+     * @return
+     */
+    public static JSONObject successPage(List<JSONObject> list) {
+        JSONObject result = successJSON();
+        JSONObject info = new JSONObject();
+        info.put("list",list);
+        // info 里面存放返回的分页结果集
+        result.put("info",info);
+        return result;
+    }
+        
 }

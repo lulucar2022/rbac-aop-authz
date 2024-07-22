@@ -29,25 +29,30 @@ import java.util.List;
 @Component
 @Order(3)
 public class PermissionAspect {
-    @Autowired
-    private TokenService tokenService;
-    
+    private final TokenService tokenService;
+
+    public PermissionAspect(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
     @Before("@annotation(cn.lulucar.springbootshirovue.config.annotation.RequiresPermissions)")
     public void before(JoinPoint joinPoint) {
         log.debug("开始校验角色权限");
         SessionUserInfo userInfo = tokenService.getUserInfo();
-        List<String> myCodes = userInfo.getPermissionList();
+        log.info("用户信息：{}",userInfo);
+        List<String> userCodes = userInfo.getPermissionList();
+        log.info("用户权限：{}",userCodes.toString());
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         RequiresPermissions annotation = methodSignature.getMethod().getAnnotation(RequiresPermissions.class);
         String[] value = annotation.value();
         log.debug("校验权限code：{}", Arrays.toString(value));
-        log.debug("用户拥有的权限code：{}", myCodes);
+        log.debug("用户拥有的权限code：{}", userCodes);
         // 校验用户拥有的权限与操作的权限
         if (annotation.logical() == Logical.AND) {
             // 交集关系，需要包含每一个权限
             for (String perm : value) {
-                if (!myCodes.contains(perm)) {
+                if (!userCodes.contains(perm)) {
                     log.warn("用户权限不足，缺少权限：{}",perm);
                     throw new UnauthorizedException();
                 }
@@ -56,7 +61,7 @@ public class PermissionAspect {
             // 并集关系，只要包含一个权限即可
             boolean hasPermission = false;
             for (String perm : value) {
-                if (myCodes.contains(perm)) {
+                if (userCodes.contains(perm)) {
                     hasPermission = true;
                     break;
                 }

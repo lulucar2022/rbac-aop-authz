@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-05-28
  */
 public interface ISysPermissionService extends IService<SysPermission> {
-    // 查询全部权限
-    
+    // 查询所有权限
+    JSONObject listAllPermission();
     
 }

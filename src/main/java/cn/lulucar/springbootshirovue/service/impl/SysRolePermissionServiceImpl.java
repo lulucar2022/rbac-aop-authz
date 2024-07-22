@@ -35,12 +35,12 @@ public class SysRolePermissionServiceImpl extends ServiceImpl<SysRolePermissionM
     }
 
     /**
-     * 给角色插入权限
+     * 批量给角色插入权限
      * @param roleId 角色Id
      * @param permissions 新增的权限列表
      * @return
      */
-    @Transactional(rollbackFor = PersistenceException.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean insertRolePermission(int roleId, Collection<Integer> permissions) {
         List<SysRolePermission> rolePermissionList = new ArrayList<>();

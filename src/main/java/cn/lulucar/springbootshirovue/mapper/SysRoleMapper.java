@@ -1,7 +1,10 @@
 package cn.lulucar.springbootshirovue.mapper;
 
 import cn.lulucar.springbootshirovue.entity.SysRole;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2024-05-28
  */
 public interface SysRoleMapper extends BaseMapper<SysRole> {
-
+    List<JSONObject> listRole();
 }

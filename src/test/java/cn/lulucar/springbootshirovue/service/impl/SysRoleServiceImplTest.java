@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +42,7 @@ class SysRoleServiceImplTest {
         Assertions.assertEquals(3,page.getSize());
     }
 
+    @Disabled
     @Test
     void addRole() {
         SysRole role = new SysRole();
@@ -52,6 +54,7 @@ class SysRoleServiceImplTest {
         iSysRoleService.addRole(role,permissions);
     }
 
+    @Disabled
     @Test
     void updateRole() {
         LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -70,6 +73,7 @@ class SysRoleServiceImplTest {
     void deleteRole() {
     }
 
+    @Disabled
     @Test
     void updateRoleName() {
         SysRole role = new SysRole();

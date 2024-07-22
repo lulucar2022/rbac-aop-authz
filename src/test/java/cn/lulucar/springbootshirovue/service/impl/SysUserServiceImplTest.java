@@ -34,7 +34,7 @@ class SysUserServiceImplTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("current",1);
         jsonObject.put("size",5);
-        Page<SysUser> page = iSysUserService.listUser(jsonObject);
+        Page<SysUser> page = iSysUserService.listUser((Long) jsonObject.get("current"), (Long) jsonObject.get("size"));
         System.out.println(page.getRecords());
         Assertions.assertNotNull(page);
     }
@@ -47,7 +47,8 @@ class SysUserServiceImplTest {
         user.setNickname("AAAAA");
         String password = PasswordUtil.encryptPassword("8888");
         user.setPassword(password);
-        iSysUserService.addUser(user);
+        // 用户创建还需要附带角色和权限
+        // iSysUserService.addUser(user);
     }
     
     @Disabled

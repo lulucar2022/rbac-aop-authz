@@ -6,6 +6,7 @@ import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
 import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
+import cn.lulucar.springbootshirovue.util.CommonUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -53,14 +54,14 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     /**
      * 新增角色
      * 1.新增角色
-     * 2.新增角色的权限    
-     * @param role 角色实体
+     * 2.新增角色的权限
+     *
+     * @param role        角色实体
      * @param permissions 权限列表
-     * @return true为成功插入
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean addRole(SysRole role, Collection<Integer> permissions) {
+    public void addRole(SysRole role, Collection<Integer> permissions) {
         if (ObjectUtils.isEmpty(role) || role.getRoleName().isEmpty()){
             throw new ParameterFormatException("role实体缺少必填属性");
         }
@@ -76,7 +77,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         // 新增角色的权限
         boolean b = iSysRolePermissionService.insertRolePermission(roleTemp.getId(), permissions);
 
-        return b && inserted > 0;
     }
 
     /**
@@ -147,5 +147,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         // 判断角色是否被用户使用
         int deleted = sysRoleMapper.deleteById(role);
         return deleted > 0;
+    }
+
+    /**
+     * 角色列表（包含用户和权限）
+     *
+     * @return
+     */
+    @Override
+    public JSONObject listAllRoles() {
+        List<JSONObject> roles = sysRoleMapper.listRole();
+        JSONObject info = new JSONObject();
+        info.put("info",roles);
+        return CommonUtil.successJSON(info);
     }
 }
