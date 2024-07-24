@@ -2,19 +2,24 @@ package cn.lulucar.springbootshirovue.service.impl;
 
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.entity.SysUser;
+import cn.lulucar.springbootshirovue.entity.SysUserRole;
 import cn.lulucar.springbootshirovue.mapper.SysUserMapper;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
 import cn.lulucar.springbootshirovue.service.ISysUserRoleService;
 import cn.lulucar.springbootshirovue.service.ISysUserService;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -58,9 +63,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void addUser(SysUser user, List<Integer> roles) {
         // 判断用户是否存在
-        // QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        // queryWrapper.eq("username",user.getUsername());
-        // int exist = Math.toIntExact(sysUserMapper.selectCount(queryWrapper));
         SysUser checked = checkUser(user.getUsername());
         if (checked != null) {
             throw new CommonJsonException(ErrorEnum.E_10009);
@@ -72,9 +74,45 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     // 修改用户
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateUser(SysUser user) {
-        return false;
+    public void updateUser(SysUser user, Set<Integer> roleIds) {
+        // 参数校验
+        if (user == null || roleIds == null || user.getId() == null) {
+            throw new CommonJsonException(ErrorEnum.E_90003);
+        }
+        // 不允许修改管理员
+        if (user.getId() == 10001)
+            return;
+        Integer userId = user.getId();
+        SysUser userTemp = new SysUser();
+        userTemp.setId(user.getId());
+        userTemp.setNickname(user.getNickname());
+        userTemp.setDeleteStatus(user.getDeleteStatus());
+        LambdaUpdateWrapper<SysUser> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(SysUser::getId,userId);
+        lambdaUpdateWrapper.ne(SysUser::getId,10001);
+        // 1.更新user
+        sysUserMapper.update(userTemp,lambdaUpdateWrapper);
+        // 2.更新user的role（user_role表）
+        // 新角色
+        Set<Integer> newRoleIds = roleIds;
+        log.info("新角色集合：{}",newRoleIds);
+        Set<SysUserRole> userAllRoles = new HashSet<>(iSysUserRoleService.getUserAllRoles(userId));
+        // 旧角色
+        Set<Integer> oldRoleIds = new HashSet<>();
+        for (SysUserRole userAllRole : userAllRoles) {
+            oldRoleIds.add(userAllRole.getRoleId());
+        }
+        log.info("旧角色集合：{}",oldRoleIds);
+        // 添加角色集合
+        Set<Integer> addRoleIds = newRoleIds.stream().filter(e -> !oldRoleIds.contains(e)).collect(Collectors.toSet());
+        log.info("添加角色集合：{}",addRoleIds);
+        // 删除角色集合
+        Set<Integer> removeRoleIds = oldRoleIds.stream().filter(e -> !newRoleIds.contains(e)).collect(Collectors.toSet());
+        log.info("删除角色集合：{}",removeRoleIds);
+        iSysUserRoleService.batchAddUserRole(userId,addRoleIds);
+        iSysUserRoleService.batchRemoveUserRole(userId,removeRoleIds);
     }
 
     /**

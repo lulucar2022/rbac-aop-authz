@@ -1,16 +1,19 @@
 package cn.lulucar.springbootshirovue.service.impl;
 
+import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
+import cn.lulucar.springbootshirovue.dto.RoleDTO;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import cn.lulucar.springbootshirovue.entity.SysRolePermission;
 import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
 import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
 import cn.lulucar.springbootshirovue.util.CommonUtil;
+import cn.lulucar.springbootshirovue.util.StringUtil;
+import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -39,16 +43,16 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         this.iSysRolePermissionService = iSysRolePermissionService;
     }
 
+
     /**
-     * 角色列表
-     * @param role Map结构
-     * @return 角色分页列表
+     * 获取所有角色
+     * id，roleName
+     *
+     * @return （id，roleName）的列表
      */
     @Override
-    public Page<SysRole> listRole(JSONObject role) {
-        
-        Page<SysRole> page = new Page<>((Long) role.get("current"), (Long) role.get("size"));
-        return sysRoleMapper.selectPage(page,null);
+    public List<RoleDTO> getAllRoles() {
+        return sysRoleMapper.getAllRoles();
     }
 
     /**
@@ -62,11 +66,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void addRole(SysRole role, Collection<Integer> permissions) {
-        if (ObjectUtils.isEmpty(role) || role.getRoleName().isEmpty()){
-            throw new ParameterFormatException("role实体缺少必填属性");
-        }
-        if (ObjectUtils.isEmpty(permissions)) {
-            throw new ParameterFormatException("permissions列表缺少值或者为空");
+        if (ObjectUtils.isEmpty(role) || StringUtil.isNullOrEmpty(role.getRoleName()) || ObjectUtils.isEmpty(permissions)){
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
         // 新增角色
         int inserted = sysRoleMapper.insert(role);
@@ -76,7 +77,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         SysRole roleTemp = sysRoleMapper.selectOne(lambdaQueryWrapper);
         // 新增角色的权限
         boolean b = iSysRolePermissionService.insertRolePermission(roleTemp.getId(), permissions);
-
     }
 
     /**
@@ -84,50 +84,75 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * 1.修改角色名称
      * 2.移除角色旧权限
      * 3.给角色添加新权限
-     * @param role 角色实体
+     *
+     * @param role        角色实体
      * @param permissions 新权限列表
-     * @return true为成功修改
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateRole(SysRole role, Collection<Integer> permissions) {
+    public void updateRole(SysRole role, Collection<Integer> permissions) {
+        if (permissions == null || role == null) 
+            throw new CommonJsonException(ErrorEnum.E_90003);
         int roleId = role.getId();
         // 新权限列表
-        List<Integer> newPerms = new ArrayList<>(permissions) ;
-        log.info("新权限：{}",newPerms.toArray());
+        Set<Integer> newPerms = new HashSet<>(permissions) ;
+        log.info("新权限：{}",newPerms);
         // 现有权限列表
-        List<SysRolePermission> roleAllPermissions = iSysRolePermissionService.getRoleAllPermissions(roleId);
+        Set<SysRolePermission> roleAllPermissions = new HashSet<>(iSysRolePermissionService.getRoleAllPermissions(roleId));
         Set<Integer> oldPerms = new HashSet<>();
         for (SysRolePermission roleAllPermission : roleAllPermissions) {
             oldPerms.add(roleAllPermission.getPermissionId());
         }
-        log.info("现有权限：{}",oldPerms.toArray());
+        log.info("现有权限：{}",oldPerms);
+        
+        // 添加权限集合
+        Set<Integer> addPerms = newPerms.stream().filter(e -> !oldPerms.contains(e)).collect(Collectors.toSet());
+        log.info("需要添加的权限：{}",addPerms);
+        // 删除权限集合
+        Set<Integer> removePerms = oldPerms.stream().filter(e -> !newPerms.contains(e)).collect(Collectors.toSet());
+        log.info("需要删除的权限：{}",removePerms);
         // 修改角色名称
         boolean b = updateRoleName(role);
+        // todo 这里的更新逻辑错误，需要修改，应该把传入的权限列表A与现有的权限B做逻辑运算，A-B为新增，B-A为删除
         // 添加新的权限
-        boolean b1 = iSysRolePermissionService.insertRolePermission(roleId, newPerms);
+        boolean b1 = iSysRolePermissionService.insertRolePermission(roleId, addPerms);
         // 移除旧的权限
-        boolean b2 = iSysRolePermissionService.removeRolePermission(roleId, oldPerms);
-        return b && b1 && b2;
+        boolean b2 = iSysRolePermissionService.removeRolePermission(roleId, removePerms);
     }
 
     /**
      * 修改角色名称
      * 该方法为修改角色方法调用
+     * ！！！ 修改的角色名称不能与现有的名称重复
      * @param role 角色实体
      * @return true 为成功修改
      */
     
     @Override
     public boolean updateRoleName(SysRole role) {
-        if (role == null || role.getId() == null || role.getRoleName().isEmpty()) {
-            throw new ParameterFormatException("role实体缺少必要属性");
+        // 参数校验
+        if (role == null || role.getId() == null || StringUtil.isNullOrEmpty(role.getRoleName())) {
+            throw new CommonJsonException(ErrorEnum.E_90003);
         }
+        // 检查现有角色名称与新名称是否重复
+        boolean isExist = false;
+        List<RoleDTO> allRoles = sysRoleMapper.getAllRoles();
+        for (RoleDTO roleTemp : allRoles) {
+            log.info(String.valueOf(roleTemp));
+            if (roleTemp.getRoleName().equals(role.getRoleName())) {
+                isExist = true;
+                break;
+            }
+        }
+        // 执行条件
         LambdaUpdateWrapper<SysRole> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(SysRole::getId,role.getId());
-
-        int updated = sysRoleMapper.update(lambdaUpdateWrapper);
-        return updated > 0;
+        
+        // 不存在相同名称，执行更新方法。
+        if (!isExist) {
+            return sysRoleMapper.update(role,lambdaUpdateWrapper) > 0;
+        }
+        return true;
     }
 
     /**
@@ -135,18 +160,17 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * 1.先判断角色是否还被用户绑定
      * 2.再删除角色的权限
      * 3.最后删除角色
+     *
      * @param role 角色实体
-     * @return true 为成功删除
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deleteRole(SysRole role) {
-        if (ObjectUtils.isEmpty(role) || role.getId() == null) {
+    public void deleteRole(SysRole role) {
+        if (role == null || role.getId() == null) {
             throw new ParameterFormatException("role实体参数异常");
         }
         // 判断角色是否被用户使用
         int deleted = sysRoleMapper.deleteById(role);
-        return deleted > 0;
     }
 
     /**

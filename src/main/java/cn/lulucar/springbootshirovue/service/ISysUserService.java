@@ -1,10 +1,12 @@
 package cn.lulucar.springbootshirovue.service;
 
+import cn.lulucar.springbootshirovue.dto.UserForUpdateDTO;
 import cn.lulucar.springbootshirovue.entity.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -23,11 +25,12 @@ public interface ISysUserService extends IService<SysUser> {
     void addUser(SysUser user, List<Integer> roles);
 
     /**
-     * 修改用户，包括删除所有角色和添加新角色
-     * @param user 用户类
-     * @return
+     * 修改用户，包括修改用户关联的角色
+     *
+     * @param user 参数：userId，nickname，deleteStatus
+     * @param roleIds 参数：roleId 集合
      */
-    boolean updateUser(SysUser user);
+    void updateUser(SysUser user, Set<Integer> roleIds);
     
     // 查询用户
     SysUser checkUser(String username);

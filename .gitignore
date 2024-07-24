@@ -4,7 +4,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-**/test
+**/test/java/cn/lulucar/springbootshirovue
 ### STS ###
 .apt_generated
 .classpath

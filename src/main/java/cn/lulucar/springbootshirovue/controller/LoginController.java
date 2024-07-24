@@ -39,7 +39,7 @@ public class LoginController {
     public JSONObject info() {
         return loginService.info();
     }
-    //todo 登出
+    // 登出
     @PostMapping("/logout")
     public JSONObject logout() {
         return loginService.logout();

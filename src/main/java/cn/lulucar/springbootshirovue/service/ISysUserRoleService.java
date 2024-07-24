@@ -3,6 +3,7 @@ package cn.lulucar.springbootshirovue.service;
 import cn.lulucar.springbootshirovue.entity.SysUserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,7 +16,9 @@ import java.util.List;
  */
 public interface ISysUserRoleService extends IService<SysUserRole> {
     // 批量添加用户的角色
-    void batchAddUserRole(Integer userId, List<Integer> roles);
+    void batchAddUserRole(Integer userId, Collection<Integer> roles);
     // 移除用户的所有角色
-    boolean removeAllUserRole(Integer userId);
+    void batchRemoveUserRole(Integer userId, Collection<Integer> roles);
+    // 根据用户id查询角色
+    List<SysUserRole> getUserAllRoles(Integer userId);
 }

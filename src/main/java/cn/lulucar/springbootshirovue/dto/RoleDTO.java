@@ -2,18 +2,15 @@ package cn.lulucar.springbootshirovue.dto;
 
 import lombok.Data;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author wenxiaolan
- * @ClassName RolePermissionDTO
- * @date 2024/6/9 21:01
+ * @ClassName RoleDTO
+ * @date 2024/7/23 22:49
  * @description
  */
 @Data
-public class RolePermissionDTO {
+public class RoleDTO {
+    
     private Integer roleId;
     private String roleName;
-    private Set<Integer> permissions;
 }

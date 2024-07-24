@@ -3,12 +3,13 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
 import cn.lulucar.springbootshirovue.service.ISysRoleService;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -30,17 +31,7 @@ class SysRoleServiceImplTest {
     private ISysRoleService iSysRoleService;
     @Autowired
     private SysRoleMapper sysRoleMapper;
-    @Test
-    void listRole() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("current",1L);
-        jsonObject.put("size",3L);
-
-        Page<SysRole> page = iSysRoleService.listRole(jsonObject);
-        System.out.println(page.getRecords());
-        System.out.println(page.getPages());
-        Assertions.assertEquals(3,page.getSize());
-    }
+    
 
     @Disabled
     @Test
@@ -60,25 +51,30 @@ class SysRoleServiceImplTest {
         LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(SysRole::getId,1);
         SysRole role = sysRoleMapper.selectOne(lambdaQueryWrapper);
-        role.setRoleName("超级管理员");
+        role.setId(7);
+        role.setRoleName("半夜管理员");
         Set<Integer> perms = new HashSet<>();
         perms.add(101);
         perms.add(102);
         perms.add(103);
-        boolean b = iSysRoleService.updateRole(role, perms);
-        Assertions.assertTrue(b);
+        iSysRoleService.updateRole(role, perms);
     }
 
     @Test
     void deleteRole() {
     }
 
-    @Disabled
-    @Test
-    void updateRoleName() {
+    
+    @DisplayName("修改角色名称")
+    @ParameterizedTest
+    @ValueSource(strings = {"大大大管理员","小小小管理员"})
+    void updateRoleName(String name) {
         SysRole role = new SysRole();
-        role.setRoleName("管理员2");
+        role.setId(7);
+        role.setRoleName(name);
         boolean b = iSysRoleService.updateRoleName(role);
         Assertions.assertTrue(b);
     }
+
+    
 }

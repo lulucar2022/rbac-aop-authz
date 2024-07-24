@@ -36,10 +36,16 @@ public class SysRole implements Serializable {
      */
     private String roleName;
 
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
+    /**
+     * 修改时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
