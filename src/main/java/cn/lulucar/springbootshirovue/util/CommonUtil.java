@@ -51,6 +51,21 @@ public class CommonUtil {
     }
 
     /**
+     * 返回错误信息json
+     * @param e 错误信息
+     * @return 失败响应结果
+     */
+    public static JSONObject errorJSON(String e) {
+        JSONObject resultJSON = new JSONObject();
+        resultJSON.put("code",e);
+        resultJSON.put("msg", 9004);
+        // 返回空数据
+        resultJSON.put("data", new JSONObject());
+        return resultJSON;
+    }
+    
+    
+    /**
      * 查询分页结果集
      * @param list 分页列表
      * @return

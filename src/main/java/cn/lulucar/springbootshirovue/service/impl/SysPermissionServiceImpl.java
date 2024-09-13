@@ -30,11 +30,13 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     /**
      * 查询所有权限
      *
-     * @return
+     * @return 所有权限
      */
     @Override
     public JSONObject listAllPermission() {
         List<JSONObject> permissions = sysPermissionMapper.listAllPermission();
-        return CommonUtil.successJSON(permissions);
+        JSONObject listAllPermission = new JSONObject();
+        listAllPermission.put("list", permissions);
+        return listAllPermission;
     }
 }

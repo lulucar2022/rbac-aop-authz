@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2024-05-28
  */
 public interface SysRoleMapper extends BaseMapper<SysRole> {
-    List<JSONObject> listRole();
+    // List<JSONObject> listRole();
     
     // 查询所有角色（id，roleName）
     @Results(

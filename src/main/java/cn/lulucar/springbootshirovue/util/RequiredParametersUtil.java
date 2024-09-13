@@ -3,6 +3,8 @@ package cn.lulucar.springbootshirovue.util;
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
  * @date 2024/6/1 18:47
  * @description 验证是否有必填参数
  */
+@Slf4j
 public class RequiredParametersUtil {
     /**
      * 
@@ -30,7 +33,8 @@ public class RequiredParametersUtil {
                 }
             }
             // 未填参数集合不为空，就抛出少了哪些参数。
-            if (!StringUtil.isNullOrEmpty(missCols)) {
+            if (!missCols.isEmpty()) {
+                log.info("缺少必填参数:" + missCols);
                 jsonObject.clear();
                 jsonObject.put("code", ErrorEnum.E_90003.getErrorCode());
                 jsonObject.put("msg", "缺少必填参数:" + missCols.toString());

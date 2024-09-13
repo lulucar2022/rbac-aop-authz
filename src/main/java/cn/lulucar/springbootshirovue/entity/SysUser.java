@@ -65,6 +65,5 @@ public class SysUser implements Serializable {
      */
     @TableLogic
     private String deleteStatus;
-
-
+    
 }

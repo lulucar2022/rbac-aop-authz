@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2024/5/31 17:50
  * @description
  */
+@CrossOrigin("*")
 @RestController
 @Slf4j
 @RequestMapping("/login")

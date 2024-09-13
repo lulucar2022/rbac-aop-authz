@@ -68,6 +68,15 @@ public class GlobalExceptionHandler {
         return commonJsonException.getResultJson();
     }
 
+    // /**
+    //  * 自定义错误信息拦截器
+    //  * 灵活性返回错误信息
+    //  */
+    // @ExceptionHandler(ParameterFormatException.class)
+    // public JSONObject parameterFormatExceptionHandler(ParameterFormatException e) {
+    //     return CommonUtil.errorJSON(e.getMessage());
+    // }
+    
     /**
      * 权限不足报错拦截
      */

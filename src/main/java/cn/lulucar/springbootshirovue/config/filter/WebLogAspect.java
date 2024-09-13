@@ -66,6 +66,7 @@ public class WebLogAspect {
         if (map != null){
             JSONObject jsonObject = new JSONObject(true);
             jsonObject.put("uri", request.getRequestURI());
+            jsonObject.put("method", request.getMethod());
             jsonObject.put("took", System.currentTimeMillis() - Long.parseLong(map.getOrDefault("startTime", String.valueOf(System.currentTimeMillis()))));
             jsonObject.put("userId", map.getOrDefault("userId", ""));
             jsonObject.put("request", JSON.parseObject(map.getOrDefault("request", "")));

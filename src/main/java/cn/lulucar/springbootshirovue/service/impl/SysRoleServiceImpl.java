@@ -3,15 +3,12 @@ package cn.lulucar.springbootshirovue.service.impl;
 import cn.lulucar.springbootshirovue.config.exception.CommonJsonException;
 import cn.lulucar.springbootshirovue.config.exception.ParameterFormatException;
 import cn.lulucar.springbootshirovue.dto.RoleDTO;
-import cn.lulucar.springbootshirovue.entity.SysRole;
-import cn.lulucar.springbootshirovue.entity.SysRolePermission;
+import cn.lulucar.springbootshirovue.dto.RoleMenuPermissionUserDTO;
+import cn.lulucar.springbootshirovue.entity.*;
 import cn.lulucar.springbootshirovue.mapper.SysRoleMapper;
-import cn.lulucar.springbootshirovue.service.ISysRolePermissionService;
-import cn.lulucar.springbootshirovue.service.ISysRoleService;
-import cn.lulucar.springbootshirovue.util.CommonUtil;
+import cn.lulucar.springbootshirovue.service.*;
 import cn.lulucar.springbootshirovue.util.StringUtil;
 import cn.lulucar.springbootshirovue.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -37,10 +34,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     private final SysRoleMapper sysRoleMapper;
     private final ISysRolePermissionService iSysRolePermissionService;
+    
 
     public SysRoleServiceImpl(SysRoleMapper sysRoleMapper, ISysRolePermissionService iSysRolePermissionService) {
         this.sysRoleMapper = sysRoleMapper;
         this.iSysRolePermissionService = iSysRolePermissionService;
+        
     }
 
 
@@ -174,15 +173,27 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     /**
-     * 角色列表（包含用户和权限）
-     *
-     * @return
+     * 角色列表（包含了所属的用户和拥有的权限）
+     * 因为有循环依赖，所以把这个方法放在了service层的 CoordinatorService中
+     * @return 
      */
     @Override
-    public JSONObject listAllRoles() {
-        List<JSONObject> roles = sysRoleMapper.listRole();
-        JSONObject info = new JSONObject();
-        info.put("info",roles);
-        return CommonUtil.successJSON(info);
+    public List<RoleMenuPermissionUserDTO> listAllRoles() {
+        return null;
+    }
+
+
+    /**
+     * @param roleId 角色Id 
+     * @return 单个角色信息
+     */
+    @Override
+    public SysRole getRoleById(Integer roleId) {
+        if (roleId == null) {
+            throw new ParameterFormatException("角色Id不能为空");
+        }
+        LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(SysRole::getId,roleId);
+        return sysRoleMapper.selectOne(lambdaQueryWrapper);
     }
 }

@@ -1,6 +1,7 @@
 package cn.lulucar.springbootshirovue.service;
 
 import cn.lulucar.springbootshirovue.dto.RoleDTO;
+import cn.lulucar.springbootshirovue.dto.RoleMenuPermissionUserDTO;
 import cn.lulucar.springbootshirovue.entity.SysRole;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -27,6 +28,8 @@ public interface ISysRoleService extends IService<SysRole> {
     boolean updateRoleName(SysRole role);
     // 删除角色
     void deleteRole(SysRole role);
-    // todo 角色列表（包含了所属的用户和拥有的权限）
-    JSONObject listAllRoles();
+    // 角色列表（包含了所属的用户和拥有的权限）
+    List<RoleMenuPermissionUserDTO> listAllRoles();
+    // 查询角色根据角色id（roleId）
+    SysRole getRoleById(Integer roleId);
 }
